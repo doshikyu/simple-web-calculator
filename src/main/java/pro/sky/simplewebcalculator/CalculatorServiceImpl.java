@@ -4,43 +4,34 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CalculatorServiceImpl implements CalculatorService {
-    private static final String GREETING_MESSAGE = "<b>Добро пожаловать в калькулятор</b>";
-    private static final String NUMBER_ERROR_MESSAGE = "Ошибка: параметры должны быть числами.";
-    private static final String DIVISION_BY_ZERO_MESSAGE = "Ошибка: деление на 0 невозможно";
-
     public CalculatorServiceImpl() {
     }
 
-    public String greetings() {
-        return GREETING_MESSAGE;
-    }
-
-    public String addition(String param1, String param2) {
+    public Float addition(String param1, String param2) {
         return calculate(param1, param2, "+");
     }
 
-    public String subtraction(String param1, String param2) {
+    public Float subtraction(String param1, String param2) {
         return calculate(param1, param2, "-");
     }
 
-    public String multiplication(String param1, String param2) {
+    public Float multiplication(String param1, String param2) {
         return calculate(param1, param2, "*");
     }
 
-    public String division(String param1, String param2) {
-        if (isIllegalArgument(param1, param2)) return NUMBER_ERROR_MESSAGE;
-        if (Integer.parseInt(param2) == 0) {
-            return DIVISION_BY_ZERO_MESSAGE;
+    public Float division(String param1, String param2) {
+        if (Float.parseFloat(param2) == 0) {
+            return Float.NaN;
         }
-        return String.format("%s / %s = %d", param1, param2, Integer.parseInt(param1) / Integer.parseInt(param2));
+        return calculate(param1, param2, "/");
     }
 
-    private String calculate(String param1, String param2, String operation) {
-        if (isIllegalArgument(param1, param2)) return NUMBER_ERROR_MESSAGE;
+    private Float calculate(String param1, String param2, String operation) {
+        if (isIllegalArgument(param1, param2)) return Float.NaN;
 
-        int num1 = Integer.parseInt(param1);
-        int num2 = Integer.parseInt(param2);
-        int result = 0;
+        Float num1 = Float.parseFloat(param1);
+        Float num2 = Float.parseFloat(param2);
+        float result = 0;
 
         switch (operation) {
             case "+":
@@ -52,8 +43,11 @@ public class CalculatorServiceImpl implements CalculatorService {
             case "*":
                 result = num1 * num2;
                 break;
+            case "/":
+                result = num1 / num2;
+                break;
         }
-        return param1 + " " + operation + " " + param2 + " = " + result;
+        return result;
     }
 
     private boolean isIllegalArgument(String p1, String p2) {
@@ -62,10 +56,11 @@ public class CalculatorServiceImpl implements CalculatorService {
 
     private boolean isNumeric(String str) {
         try {
-            Integer.parseInt(str);
+            Float.parseFloat(str);
             return true;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 }
+
